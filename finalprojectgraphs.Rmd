@@ -12,6 +12,7 @@ knitr::opts_chunk$set(echo = TRUE)
 ```{r}
 library(tidyverse)
 library(gt)
+library(plotly)
 sleep<-read.csv("SleepInMammals.csv")
 ```
 
@@ -71,7 +72,7 @@ gt(rowname_col = "row",
 ```
 
 ```{r}
-sleep %>% 
+sleep_graph<-sleep %>% 
   mutate(body_wtlbs = Body.Weight..kg.*2.20462) %>%  
   arrange(desc(body_wtlbs)) %>% 
   head(25) %>% 
@@ -79,13 +80,17 @@ sleep %>%
     y = body_wtlbs, 
     x = Total.sleep..hrs.day.,
     size = body_wtlbs,
-    alpha = .5))+
+    alpha = .5,
+    color= Species.of.animal))+
   geom_point() +
   labs(title = "Total hours per day mammals of different weight (lbs) sleep",
        x = "",
        y = "") +
   theme(plot.title.position = "plot",
         legend.position = "None")
+
+ggplotly(sleep_graph) %>% 
+  hide_legend()
 ```
 
 ```{r}
