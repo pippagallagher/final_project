@@ -14,24 +14,6 @@ library(tidyverse)
 sleep<-read.csv("SleepInMammals.csv")
 ```
 
-```{r}
-sleep
-```
 
-```{r}
-sleep_simple <-
-sleep %>% 
-  mutate(Species = Species.of.animal,
-         Body_Weight_kg = Body.Weight..kg. ,
-         Brain_Weight_g = Brain.Weight..g. ,
-        Hours_sleep = Total.sleep..hrs.day. ,
-        Life_span = Maximum.life.span..years.) %>% 
-  select(Species, Body_Weight_kg, Brain_Weight_g, Hours_sleep, Life_span )
-```
 
-```{r}
-sleep_simple %>% 
-  ggplot() +
-  geom_jitter(aes(x = Brain_Weight_g, y = Hours_sleep, color = Species, fill = Species))
-```
 
