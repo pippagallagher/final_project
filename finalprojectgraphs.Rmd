@@ -11,6 +11,7 @@ knitr::opts_chunk$set(echo = TRUE)
 
 ```{r}
 library(tidyverse)
+library(gt)
 sleep<-read.csv("SleepInMammals.csv")
 ```
 
@@ -33,5 +34,72 @@ sleep %>%
 sleep_simple %>% 
   ggplot() +
   geom_jitter(aes(x = Brain_Weight_g, y = Hours_sleep, color = Species, fill = Species))
+```
+
+```{r}
+sleep %>% 
+  select(!Gestation.time..days.:Overall.danger.index) %>% 
+  arrange(desc(Body.Weight..kg.)) %>% 
+gt(rowname_col = "row",
+   groupname_col = "group") %>% 
+  tab_header(
+    title = md("**Sleep Patterns in Mammals**")) %>% 
+  tab_footnote(
+    footnote = "Weight in kilograms", 
+    locations = cells_column_labels(
+      columns = 2)) %>% 
+  tab_footnote(
+    footnote = "Weight in grams",
+    locations = cells_column_labels(
+      columns = 3)) %>%
+  tab_footnote(
+    footnote = "Non-dreaming hours per day",
+    locations = cells_column_labels(
+      columns = 4)) %>%
+  tab_footnote(
+    footnote = "Dreaming hours per day",
+    locations = cells_column_labels(
+      columns = 5)) %>% 
+  cols_label(
+    Species.of.animal="Species",
+    Body.Weight..kg.="Body Weight",
+    Brain.Weight..g. ="Brain Weight",
+    Slow.wave.sleep..hrs.day. = "Slow Wave Sleep",
+    Paradoxical.sleep..hrs.day. = "Paradoxical Sleep",
+    Total.sleep..hrs.day.	= "Total Sleep",
+    Maximum.life.span..years. ="Maximum Life Span (yrs)")
+```
+
+```{r}
+sleep %>% 
+  mutate(body_wtlbs = Body.Weight..kg.*2.20462) %>%  
+  arrange(desc(body_wtlbs)) %>% 
+  head(25) %>% 
+  ggplot(aes(
+    y = body_wtlbs, 
+    x = Total.sleep..hrs.day.,
+    size = body_wtlbs,
+    alpha = .5))+
+  geom_point() +
+  labs(title = "Total hours per day mammals of different weight (lbs) sleep",
+       x = "",
+       y = "") +
+  theme(plot.title.position = "plot",
+        legend.position = "None")
+```
+
+```{r}
+sleep %>% 
+    ggplot(aes(x = Overall.danger.index,
+               y = fct_reorder(Species.of.animal,
+                               Overall.danger.index,
+                               .desc = FALSE),
+               fill = Overall.danger.index)) +
+    geom_col() +
+    labs(title = "Overall danger index of attacks from other animals for mammals",
+         x = "",
+         y = "") +
+    theme(legend.position = "None",
+          plot.title.position = "plot")
 ```
 
