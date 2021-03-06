@@ -111,7 +111,10 @@ sleep %>%
 sleep %>% 
   mutate(percent_dreaming =  (Paradoxical.sleep..hrs.day./Total.sleep..hrs.day.) * 100) %>% 
   ggplot() +
-  geom_col(aes(x = percent_dreaming, y = Species.of.animal))
+  geom_col(aes(x = percent_dreaming, y = Species.of.animal, fill = Total.sleep..hrs.day.)) +
+  labs(title = "Dreams of Mammals",
+       y = "",
+       x = "Percentage of Hours Dreaming")
   
 ```
 
