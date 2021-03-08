@@ -119,13 +119,12 @@ sleep %>%
 ```
 ```{r}
 sleep %>% 
-  group_by(Sleep.exposure.index) %>% 
-  arrange(Slow.wave.sleep..hrs.day.) %>% 
   select(Species.of.animal, Slow.wave.sleep..hrs.day.,Sleep.exposure.index) %>% 
   ggplot() +
-  geom_col(aes(y = Slow.wave.sleep..hrs.day., x = Species.of.animal, 
+  geom_col(aes(y = Slow.wave.sleep..hrs.day., 
+               x = fct_reorder(Species.of.animal,Slow.wave.sleep..hrs.day.,median),
                fill = Sleep.exposure.index)) +
-  geom_text(aes(y = Slow.wave.sleep..hrs.day. + 5, x=Species.of.animal, label= Species.of.animal), color="white", fontface="bold",alpha=0.6, size=2.5, inherit.aes = FALSE ) +
+  geom_text(aes(y = Slow.wave.sleep..hrs.day. + 5, x=fct_reorder(Species.of.animal,Slow.wave.sleep..hrs.day.,median), label= Species.of.animal), color="white", fontface="bold",alpha=0.6, size=2.5, inherit.aes = FALSE ) +
   labs(title = "Sleep Breakdown",
        y = "",
        x = "") +
