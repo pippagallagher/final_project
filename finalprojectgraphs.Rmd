@@ -92,6 +92,7 @@ sleep %>%
     theme(legend.position = "None",
           plot.title.position = "plot")
 ```
+
 ```{r}
 G0 <-
 sleep %>% 
@@ -130,9 +131,8 @@ G1 <-
     legend.background = element_rect(fill = "black"),
     plot.title = element_text(color = "white"),
     legend.text = element_text(color = "white"),
-    legend.title = element_text(color = "white")) +
+    legend.title = element_text(color = "white")) 
   
-
 G1
 ```
 
@@ -165,6 +165,27 @@ G2 <-
     legend.title = element_text(color = "white")) 
 
 G2
+```
+```{r}
+sleep %>% 
+  ggplot() +
+  geom_violin(aes(x = Overall.danger.index,
+                  y= Maximum.life.span..years.),
+                  fill = "violet",
+                  color = "purple") +
+  theme(
+    plot.background = element_rect("black"),
+    panel.background = element_rect("black"),
+    plot.title = element_text(color = "purple"),
+    panel.grid.major.x = element_blank(),
+    panel.grid.minor.x = element_blank(),
+    panel.grid.major.y = element_blank(),
+    panel.grid.minor.y = element_blank()
+  ) +
+  labs(x = "",
+       y = "",
+       title = "Maximum Life Span and Danger Index")
+  
 ```
 
 
