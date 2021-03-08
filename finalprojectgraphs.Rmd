@@ -13,6 +13,7 @@ knitr::opts_chunk$set(echo = TRUE)
 library(tidyverse)
 library(gt)
 library(plotly)
+library(patchwork)
 sleep<-read.csv("SleepInMammals.csv")
 ```
 
@@ -20,22 +21,6 @@ sleep<-read.csv("SleepInMammals.csv")
 sleep
 ```
 
-```{r}
-sleep_simple <-
-sleep %>% 
-  mutate(Species = Species.of.animal,
-         Body_Weight_kg = Body.Weight..kg. ,
-         Brain_Weight_g = Brain.Weight..g. ,
-        Hours_sleep = Total.sleep..hrs.day. ,
-        Life_span = Maximum.life.span..years.) %>% 
-  select(Species, Body_Weight_kg, Brain_Weight_g, Hours_sleep, Life_span )
-```
-
-```{r}
-sleep_simple %>% 
-  ggplot() +
-  geom_jitter(aes(x = Brain_Weight_g, y = Hours_sleep, color = Species, fill = Species))
-```
 
 ```{r}
 sleep %>% 
@@ -108,26 +93,33 @@ sleep %>%
           plot.title.position = "plot")
 ```
 ```{r}
+G0 <-
 sleep %>% 
-  mutate(percent_dreaming =  (Paradoxical.sleep..hrs.day./Total.sleep..hrs.day.) * 100) %>% 
+  mutate(percent_dreaming =(Paradoxical.sleep..hrs.day./Total.sleep..hrs.day.) * 100) %>% 
   ggplot() +
   geom_col(aes(x = percent_dreaming, y = Species.of.animal, fill = Total.sleep..hrs.day.)) +
-  labs(title = "How much do Mammals Dream",
+  labs(title = "How Much do Mammals Dream",
        y = "",
-       x = "Percentage of Hours Dreaming")
-  
+       x = "Percentage of Hours Dreaming") +
+  scale_x_continuous(expand = c(0,0))
+G0
+
 ```
+
 ```{r}
-sleep %>% 
+G1 <-
+  sleep %>% 
   select(Species.of.animal, Slow.wave.sleep..hrs.day.,Sleep.exposure.index) %>% 
   ggplot() +
   geom_col(aes(y = Slow.wave.sleep..hrs.day., 
                x = fct_reorder(Species.of.animal,Slow.wave.sleep..hrs.day.,median),
                fill = Sleep.exposure.index)) +
   geom_text(aes(y = Slow.wave.sleep..hrs.day. + 5, x=fct_reorder(Species.of.animal,Slow.wave.sleep..hrs.day.,median), label= Species.of.animal), color="white", fontface="bold",alpha=0.6, size=2.5, inherit.aes = FALSE ) +
+  scale_color_viridis_c(option = "magma") +
   labs(title = "Sleep Breakdown",
        y = "",
-       x = "") +
+       x = "",
+       fill = "Sleep Exposure Index") +
   coord_polar(start = 0) +
   ylim(-3,23) +
    theme(
@@ -138,7 +130,44 @@ sleep %>%
     legend.background = element_rect(fill = "black"),
     plot.title = element_text(color = "white"),
     legend.text = element_text(color = "white"),
-    legend.title = element_text(color = "white")) 
+    legend.title = element_text(color = "white")) +
   
+
+G1
 ```
+
+
+```{r}
+G2 <-
+  sleep %>% 
+  select(Species.of.animal,Paradoxical.sleep..hrs.day. ,Sleep.exposure.index) %>% 
+  ggplot() +
+  geom_col(aes(y = Paradoxical.sleep..hrs.day., 
+               x = fct_reorder(Species.of.animal,Paradoxical.sleep..hrs.day.,median),
+               fill = Sleep.exposure.index)) +
+  geom_text(aes(y = Paradoxical.sleep..hrs.day. + 3, x=fct_reorder(Species.of.animal,Paradoxical.sleep..hrs.day.,median), label= Species.of.animal), color="white", fontface="bold",alpha=0.6, size=2.5, inherit.aes = FALSE ) +
+  scale_color_viridis_c(option = "magma") +
+  labs(title = "Sleep Breakdown",
+       y = "",
+       x = "",
+       fill = "Sleep Exposure Index") +
+  coord_polar(start = 0) +
+  ylim(-1,10) +
+   theme(
+    axis.text = element_blank(),
+    panel.grid = element_blank(),
+    plot.background = element_rect(fill = "black"),
+    panel.background = element_rect(fill = "black"),
+    legend.background = element_rect(fill = "black"),
+    legend.position = "none",
+    plot.title = element_text(color = "white"),
+    legend.text = element_text(color = "white"),
+    legend.title = element_text(color = "white")) 
+
+G2
+```
+
+
+
+
 
