@@ -96,12 +96,16 @@ sleep %>%
 ```{r}
 G0 <-
 sleep %>% 
-  mutate(percent_dreaming =(Paradoxical.sleep..hrs.day./Total.sleep..hrs.day.) * 100) %>% 
+  mutate(percent_dreaming = (Paradoxical.sleep..hrs.day./Total.sleep..hrs.day.) * 100) %>% 
+  filter(percent_dreaming != 0) %>% 
   ggplot() +
-  geom_col(aes(x = percent_dreaming, y = Species.of.animal, fill = Total.sleep..hrs.day.)) +
+  geom_col(aes(x = percent_dreaming, 
+               y = fct_reorder(Species.of.animal, percent_dreaming, median),
+               fill = Total.sleep..hrs.day.)) +
   labs(title = "How Much do Mammals Dream",
        y = "",
-       x = "Percentage of Hours Dreaming") +
+       x = "Percentage of Hours Dreaming",
+       fill = "Total Sleeping Hours") +
   scale_x_continuous(expand = c(0,0))
 G0
 
