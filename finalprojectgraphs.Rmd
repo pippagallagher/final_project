@@ -57,7 +57,8 @@ gt(rowname_col = "row",
 ```
 
 ```{r}
-sleep_graph<-sleep %>% 
+sleep_graph<-
+  sleep %>% 
   mutate(body_wtlbs = Body.Weight..kg.*2.20462) %>%  
   arrange(desc(body_wtlbs)) %>% 
   head(25) %>% 
@@ -72,7 +73,7 @@ sleep_graph<-sleep %>%
        x = "",
        y = "") +
   theme(plot.title.position = "plot",
-        legend.position = "None")
+        legend.position = "None") 
 
 ggplotly(sleep_graph) %>% 
   hide_legend()
@@ -84,7 +85,7 @@ sleep %>%
                y = fct_reorder(Species.of.animal,
                                Overall.danger.index,
                                .desc = FALSE),
-               fill = Overall.danger.index)) +
+               fill = Predation.index)) +
     geom_col() +
     labs(title = "Overall danger index of attacks from other animals for mammals",
          x = "",
@@ -156,31 +157,29 @@ G2 <-
        x = "",
        fill = "Sleep Exposure Index") +
   coord_polar(start = 0) +
-  ylim(-1,10) +
+  ylim(-1,15) +
    theme(
     axis.text = element_blank(),
     panel.grid = element_blank(),
     plot.background = element_rect(fill = "black"),
     panel.background = element_rect(fill = "black"),
     legend.background = element_rect(fill = "black"),
-    legend.position = "none",
     plot.title = element_text(color = "white"),
     legend.text = element_text(color = "white"),
     legend.title = element_text(color = "white")) 
-
 G2
+
 ```
 ```{r}
 sleep %>% 
   ggplot() +
   geom_violin(aes(x = Overall.danger.index,
-                  y= Maximum.life.span..years.),
-                  fill = "violet",
-                  color = "purple") +
+                  y = Maximum.life.span..years.,
+                  color = Overall.danger.index)) +
   theme(
     plot.background = element_rect("black"),
     panel.background = element_rect("black"),
-    plot.title = element_text(color = "purple"),
+    plot.title = element_text(color = "lightgrey"),
     panel.grid.major.x = element_blank(),
     panel.grid.minor.x = element_blank(),
     panel.grid.major.y = element_blank(),
@@ -192,6 +191,7 @@ sleep %>%
        title = "Maximum Life Span and Danger Index")
   
 ```
+
 
 
 
