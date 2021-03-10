@@ -116,28 +116,30 @@ G0
 ```{r}
 G1 <-
   sleep %>% 
+  filter(Species.of.animal %in% c("Horse", "Cow", "Pig", "Human", "Sheep", "Chimpanzee", "Goat", "Baboon", "Red fox", "Cat", "Rabbit", "Rat", "Ground squirrel", "Mouse")) %>% 
   select(Species.of.animal, Slow.wave.sleep..hrs.day.,Sleep.exposure.index) %>% 
   ggplot() +
   geom_col(aes(y = Slow.wave.sleep..hrs.day., 
                x = fct_reorder(Species.of.animal,Slow.wave.sleep..hrs.day.,median),
                fill = Sleep.exposure.index)) +
-  geom_text(aes(y = Slow.wave.sleep..hrs.day. + 5, x=fct_reorder(Species.of.animal,Slow.wave.sleep..hrs.day.,median), label= Species.of.animal), color="white", fontface="bold",alpha=0.6, size=2.5, inherit.aes = FALSE ) +
+  geom_text(aes(y = Slow.wave.sleep..hrs.day. + 5, x=fct_reorder(Species.of.animal,Slow.wave.sleep..hrs.day.,median), label= Species.of.animal), color="white", fontface="bold",alpha=0.6, size= 2.5, inherit.aes = FALSE ) +
   scale_color_viridis_c(option = "magma") +
-  labs(title = "Sleep Breakdown",
+  labs(title = "Non-Dreaming Hours of Sleep per Day",
        y = "",
        x = "",
        fill = "Sleep Exposure Index") +
   coord_polar(start = 0) +
-  ylim(-3,23) +
+  ylim(-3,18) +
    theme(
-    axis.text = element_blank(),
+    axis.text.x = element_blank(),
     panel.grid = element_blank(),
     plot.background = element_rect(fill = "black"),
     panel.background = element_rect(fill = "black"),
     legend.background = element_rect(fill = "black"),
     plot.title = element_text(color = "white"),
     legend.text = element_text(color = "white"),
-    legend.title = element_text(color = "white")) +
+    legend.title = element_text(color = "white"),
+    axis.text.y = element_text(color = "white")) +
   scale_fill_gradient(high = "green", low = "darkgreen")
   
 G1
