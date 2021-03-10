@@ -107,7 +107,8 @@ sleep %>%
        y = "",
        x = "Percentage of Hours Dreaming",
        fill = "Total Sleeping Hours") +
-  scale_x_continuous(expand = c(0,0))
+  scale_x_continuous(expand = c(0,0)) +
+  scale_fill_gradient(high = "green", low = "darkgreen")
 G0
 
 ```
@@ -136,7 +137,8 @@ G1 <-
     legend.background = element_rect(fill = "black"),
     plot.title = element_text(color = "white"),
     legend.text = element_text(color = "white"),
-    legend.title = element_text(color = "white")) 
+    legend.title = element_text(color = "white")) +
+  scale_fill_gradient(high = "green", low = "darkgreen")
   
 G1
 ```
