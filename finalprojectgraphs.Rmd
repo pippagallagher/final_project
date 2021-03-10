@@ -1,15 +1,22 @@
 ---
-title: "Exploring_pippa"
-output: html_document
+title: "Mammal Sleep Behavior"
+author: "Joselyn Angeles and Pippa Gallagher"
+output: 
+  html_document:
+    toc: true
+    toc_float: true
+    theme: yeti
+    df_print: paged
+    code_download: true
 ---
 
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
 ```
 
-## R Markdown
 
-```{r}
+
+```{r, echo=FALSE, include=FALSE}
 library(tidyverse)
 library(gt)
 library(plotly)
@@ -17,12 +24,9 @@ library(patchwork)
 sleep<-read.csv("SleepInMammals.csv")
 ```
 
-```{r}
-sleep
-```
+## Introduction
 
-
-```{r}
+```{r, echo=FALSE}
 sleep %>% 
   select(!Gestation.time..days.:Overall.danger.index) %>% 
   arrange(desc(Body.Weight..kg.)) %>% 
@@ -56,7 +60,7 @@ gt(rowname_col = "row",
     Maximum.life.span..years. ="Maximum Life Span (yrs)")
 ```
 
-```{r}
+```{r, echo=FALSE}
 sleep_graph<-
   sleep %>% 
   mutate(body_wtlbs = Body.Weight..kg.*2.20462) %>%  
@@ -79,22 +83,37 @@ ggplotly(sleep_graph) %>%
   hide_legend()
 ```
 
-```{r}
+```{r, echo=FALSE}
 sleep %>% 
     ggplot(aes(x = Overall.danger.index,
                y = fct_reorder(Species.of.animal,
                                Overall.danger.index,
                                .desc = FALSE),
-               fill = Predation.index)) +
+               fill = Predation.index),
+           color = "white") +
     geom_col() +
     labs(title = "Overall danger index of attacks from other animals for mammals",
+         subtitle = "    ",
+         caption = "Pippa Gallagher and Joselyn Angeles",
          x = "",
-         y = "") +
-    theme(legend.position = "None",
-          plot.title.position = "plot")
+         y = "",
+         fill = "Predation Index") +
+  scale_x_continuous(expand = c(0,0)) +
+    theme(
+          axis.text.y = element_text(size = 6.5),
+          plot.title.position = "plot",
+          plot.caption.position = "plot",
+          plot.title = element_text(color = "#0a203b"),
+          panel.grid.major.x = element_blank(),
+          panel.grid.minor.x = element_blank(),
+          panel.grid.major.y = element_blank(),
+          panel.grid.minor.y = element_blank(),
+          panel.background = element_rect(color = "white"),
+          plot.background = element_rect(color = "white")) +
+    scale_fill_gradient(high = "#0a203b", low = "#c3deff")
 ```
 
-```{r}
+```{r, echo=FALSE}
 G0 <-
 sleep %>% 
   mutate(percent_dreaming = (Paradoxical.sleep..hrs.day./Total.sleep..hrs.day.) * 100) %>% 
@@ -106,14 +125,26 @@ sleep %>%
   labs(title = "How Much do Mammals Dream",
        y = "",
        x = "Percentage of Hours Dreaming",
-       fill = "Total Sleeping Hours") +
+       fill = "Total Sleeping Hours",
+       caption = "Pippa Gallagher and Joselyn Angeles",
+       subtitle = "    ") +
+  theme(
+    axis.text.y = element_text(size = 6.5),
+    panel.grid.major.x = element_blank(),
+    panel.grid.minor.x = element_blank(),
+    panel.grid.major.y = element_blank(),
+    panel.grid.minor.y = element_blank(),
+    plot.title.position = "plot",
+    plot.title = element_text(color = "#0a203b"),
+    plot.caption.position = "plot"
+  ) +
   scale_x_continuous(expand = c(0,0)) +
-  scale_fill_gradient(high = "green", low = "darkgreen")
+  scale_fill_gradient(high = "#0a203b", low = "#c3deff")
 G0
 
 ```
 
-```{r}
+```{r, echo=FALSE}
 G1 <-
   sleep %>% 
   filter(Species.of.animal %in% c("Horse", "Cow", "Pig", "Human", "Sheep", "Chimpanzee", "Goat", "Baboon", "Red fox", "Cat", "Rabbit", "Rat", "Ground squirrel", "Mouse")) %>% 
@@ -126,7 +157,7 @@ G1 <-
   scale_color_viridis_c(option = "magma") +
   labs(title = "Non-Dreaming Hours of Sleep per Day",
        caption = "Pippa Gallagher and Joselyn Angeles",
-       subtitle = "This measures the number of hours of slow wave (non-dreaming) sleep each mammal, on avergae, has each night. The Sleep Measure Index determines how vulnerabel the mammal is when sleeping, with 1 being the least vulnerbale and 5 the most.",
+       subtitle = "This measures the number of hours of slow wave (non-dreaming) sleep each mammal, on avergae, has each night.\nThe Sleep Measure Index determines how vulnerable the mammal is when sleeping, with 1 being the least vulnerbale \nand 5 the most.",
        y = "",
        x = "",
        fill = "Sleep Exposure Index") +
@@ -139,18 +170,20 @@ G1 <-
     panel.background = element_rect(fill = "#0a203b"),
     legend.background = element_rect(fill = "#0a203b"),
     plot.title = element_text(color = "white"),
+    plot.title.position = "plot",
     legend.text = element_text(color = "white"),
     legend.title = element_text(color = "white"),
     axis.text.y = element_text(color = "white"),
     plot.caption = element_text(color = "white"),
-    plot.subtitle = element_text(color = "white")) +
+     plot.caption.position = "plot",
+    plot.subtitle = element_text(color = "white", size = 7)) +
   scale_fill_gradient(high = "#2473db", low = "#c3deff")
   
 G1
 ```
 
 
-```{r}
+```{r, echo=FALSE}
 G2 <-
   sleep %>% 
   filter(Species.of.animal %in% c("Horse", "Cow", "Pig", "Human", "Sheep", "Chimpanzee", "Goat", "Baboon", "Red fox", "Cat", "Rabbit", "Rat", "Ground squirrel", "Mouse")) %>% 
@@ -160,10 +193,9 @@ G2 <-
                x = fct_reorder(Species.of.animal,Paradoxical.sleep..hrs.day.,median),
                fill = Sleep.exposure.index)) +
   geom_text(aes(y = Paradoxical.sleep..hrs.day. + 2, x=fct_reorder(Species.of.animal,Paradoxical.sleep..hrs.day.,median), label= Species.of.animal), color="white", fontface="bold",alpha=0.6, size=2.5, inherit.aes = FALSE ) +
-  scale_color_viridis_c(option = "magma") +
   labs(title = "Dreaming Hours of Sleep per Day",
        caption = "Pippa Gallagher and Joselyn Angeles",
-       subtitle = "This measures the number of hours of paradoxical (dreaming) sleep each mammal, on avergae, has each night. The Sleep Measure Index determines how vulnerabel the mammal is when sleeping, with 1 being the least vulnerbale and 5 the most.",
+       subtitle = "This measures the number of hours of paradoxical (dreaming) sleep each mammal, on avergae, has each night.\nThe Sleep Measure Index determines how vulnerable the mammal is when sleeping, with 1 being the least vulnerbale\nand 5 the most.",
        y = "",
        x = "",
        fill = "Sleep Exposure Index") +
@@ -176,40 +208,115 @@ G2 <-
     panel.background = element_rect(fill = "#0a203b"),
     legend.background = element_rect(fill = "#0a203b"),
     plot.title = element_text(color = "white"),
+    plot.title.position = "plot",
     legend.text = element_text(color = "white"),
     legend.title = element_text(color = "white"),
     axis.text.y = element_text(color = "white"),
     plot.caption = element_text(color = "white"),
-    plot.subtitle = element_text(color = "white")) +
+    plot.caption.position = "plot",
+    plot.subtitle = element_text(color = "white", size = 7)) +
   scale_fill_gradient(high = "#2473db", low = "#c3deff")
 G2
 
 ```
 
 
-```{r}
-sleep %>% 
+```{r, echo=FALSE}
+G3 <-
+  sleep %>% 
   ggplot() +
   geom_violin(aes(x = Overall.danger.index,
-                  y = Maximum.life.span..years.,
-                  color = Overall.danger.index)) +
+                  y = Maximum.life.span..years.),
+                  color = "#2473db",
+                  fill = "#c3deff") +
   theme(
-    plot.background = element_rect("black"),
-    panel.background = element_rect("black"),
-    plot.title = element_text(color = "lightgrey"),
+    plot.background = element_rect("#0a203b"),
+    panel.background = element_rect("#0a203b"),
+    plot.title = element_text(color = "white"),
     panel.grid.major.x = element_blank(),
     panel.grid.minor.x = element_blank(),
     panel.grid.major.y = element_blank(),
     panel.grid.minor.y = element_blank(),
-    legend.position = "none"
+    axis.text = element_text(color = "white"),
+    plot.caption = element_text(color = "white"),
+    plot.caption.position = "plot",
+    plot.title.position = "plot",
+    plot.subtitle = element_text(color = "white", size = 7)
   ) +
   labs(x = "",
        y = "",
-       title = "Maximum Life Span and Danger Index")
+       title = "The Correlation between Maximum Life Span and Danger Index",
+       subtitle = "The Danger Index determines how vulnerable the mammal is to harm, with 1 being the least vulnerbale and 5 the most.",
+       caption = "Pippa Gallagher and Joselyn Angeles")
   
+G3
 ```
 
+```{r, echo=FALSE}
+G4 <-
+  sleep %>% 
+   filter(Species.of.animal %in% c("Horse", "Cow", "Pig", "Human", "Sheep", "Chimpanzee", "Goat", "Baboon", "Red fox", "Cat", "Rabbit", "Rat", "Ground squirrel", "Mouse")) %>% 
+  mutate(Total_hours_sleeping_life = Total.sleep..hrs.day. * (Maximum.life.span..years. * 365),
+         Total_hours_alive = Maximum.life.span..years. * 365 * 24,
+         Prop_spent_sleeping = (Total_hours_sleeping_life/Total_hours_alive) *100) %>% 
+   ggplot() +
+  geom_col(aes(y = Prop_spent_sleeping, 
+               x = fct_reorder(Species.of.animal,Prop_spent_sleeping,median),
+              fill = Maximum.life.span..years.)) +
+  geom_text(aes(y = Prop_spent_sleeping + 20, x=fct_reorder(Species.of.animal,Prop_spent_sleeping,median), label= Species.of.animal), color="white", fontface="bold",alpha=0.6, size=2.5, inherit.aes = FALSE ) +
+  coord_polar(start = 0) +
+  ylim(-5,90) +
+   theme(
+    axis.text.x = element_blank(),
+    panel.grid = element_blank(),
+    plot.background = element_rect(fill = "#0a203b"),
+    panel.background = element_rect(fill = "#0a203b"),
+    legend.background = element_rect(fill = "#0a203b"),
+    plot.title = element_text(color = "white"),
+    plot.title.position = "plot",
+    legend.text = element_text(color = "white"),
+    legend.title = element_text(color = "white"),
+    axis.text.y = element_text(color = "white"),
+    plot.caption = element_text(color = "white"),
+    plot.caption.position = "plot",
+    plot.subtitle = element_text(color = "white", size = 7)) +
+  scale_fill_gradient(high = "#2473db", low = "#c3deff") +
+  labs(title = "Proportion of Mammals' Lives Spent Sleeping",
+       x = "",
+       y = "",
+       caption = "Pippa Gallagher and Joselyn Angeles",
+       fill = "Maximum Life Span")
+  
+G4 
+```
 
+```{r, echo=FALSE}
+G5 <-
+sleep %>% 
+  pivot_longer(cols = Slow.wave.sleep..hrs.day.:Paradoxical.sleep..hrs.day., names_to = "Dream_Type", values_to = "Hours") %>% 
+  ggplot() +
+  geom_col(aes(x = Hours, y = Species.of.animal, fill = Dream_Type)) +
+  labs(title = "Proportion of Dreaming vs Non-Dreaming Sleep",
+       y = "",
+       x = "",
+       fill = "Sleep Type",
+       caption = "Pippa Gallagher and Joselyn Angeles",
+       subtitle = "    ") +
+  theme(
+    axis.text.y = element_text(size = 6.5),
+    panel.grid.major.x = element_blank(),
+    panel.grid.minor.x = element_blank(),
+    panel.grid.major.y = element_blank(),
+    panel.grid.minor.y = element_blank(),
+    plot.title.position = "plot",
+    plot.title = element_text(color = "#0a203b"),
+    plot.caption.position = "plot"
+  ) +
+  scale_x_continuous(expand = c(0,0)) +
+  scale_fill_manual(labels = c("Dreaming", "Non-Dreaming"), values = c("#0a203b","#2473db"))
+
+G5  
+```
 
 
 
