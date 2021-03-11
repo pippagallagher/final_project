@@ -65,15 +65,14 @@ sleep_graph<-
   sleep %>% 
   mutate(body_wtlbs = Body.Weight..kg.*2.20462) %>%  
   arrange(desc(body_wtlbs)) %>% 
-  head(25) %>% 
   ggplot(aes(
     y = body_wtlbs, 
-    x = Total.sleep..hrs.day.,
+    x = Slow.wave.sleep..hrs.day.,
     size = body_wtlbs,
     alpha = .5,
     color= Species.of.animal))+
   geom_point() +
-  labs(title = "Total hours per day mammals of different weight (lbs) sleep",
+  labs(title = "Slow-wave sleep and body size (lbs)",
        x = "",
        y = "") +
   theme(plot.title.position = "plot",
@@ -295,7 +294,7 @@ G5 <-
 sleep %>% 
   pivot_longer(cols = Slow.wave.sleep..hrs.day.:Paradoxical.sleep..hrs.day., names_to = "Dream_Type", values_to = "Hours") %>% 
   ggplot() +
-  geom_col(aes(x = Hours, y = Species.of.animal, fill = Dream_Type)) +
+  geom_col(aes(x = Hours, y = fct_reorder(Species.of.animal, Hours), fill = Dream_Type)) +
   labs(title = "Proportion of Dreaming vs Non-Dreaming Sleep",
        y = "",
        x = "",
