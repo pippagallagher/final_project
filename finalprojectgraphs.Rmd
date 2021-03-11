@@ -21,12 +21,15 @@ library(tidyverse)
 library(gt)
 library(plotly)
 library(patchwork)
+library(kableExtra)
+library(htmltools)
+library(flexdashboard)
 sleep<-read.csv("SleepInMammals.csv")
 ```
 
-## Introduction
+**Introduction**
 
-Sleep is a natural phenomenon that is ubiquitous for mammals; regardless of species, sleep is a fundamental aspect of mammalian physiology. For humans, sleep specialists recommend that adults get around 7 to 9 hours of sleep per day, which means that on average we spend about ⅓ of our lives sleeping. 
+Sleep is a natural phenomenon that is ubiquitous for mammals; regardless of species, sleep is a fundamental aspect of mammalian physiology. For humans, sleep specialists recommend that adults get around 7 to 9 hours of sleep per day^[Olson, Eric. “How Many Hours of Sleep Do You Need?” Mayo Clinic, Mayo Foundation for Medical Education and Research, 6 June 2019, www.mayoclinic.org/healthy-lifestyle/adult-health/expert-answers/how-many-hours-of-sleep-are-enough/faq-20057898.], which means that on average we spend about ⅓ of our lives sleeping. 
 ```{r, echo=FALSE}
 G4 <-
   sleep %>% 
@@ -65,18 +68,24 @@ G4 <-
 G4 
 ```
 
- Numerous studies have shown that this need for sleep is tied to a myriad of physical and mental health benefits, including boosting immunity, improving memory and learning functions, and even enhancing mental and emotional resilience to problems. Scientists posit that other mammals need sleep for similar reasons, finding that sleep-deprived animals will lose weight despite food intake, and have issues regulating their body temperature, resulting in their death.
+ Numerous studies have shown that this need for sleep is tied to a myriad of physical and mental health benefits, including boosting immunity, improving memory and learning functions^[“Benefits of Sleep.” Benefits of Sleep | Healthy Sleep, healthysleep.med.harvard.edu/healthy/matters/benefits-of-sleep. ], and even enhancing mental and emotional resilience to problems^[Publishing, Harvard Health. “Sleep and Mental Health.” Harvard Health, www.health.harvard.edu/newsletter_article/sleep-and-mental-health.]. Scientists posit that other mammals need sleep for similar reasons, finding that sleep-deprived animals will lose weight despite food intake, and have issues regulating their body temperature, resulting in their death^[Purves, Dale. “Why Do Humans and Many Other Animals Sleep?” Neuroscience. 2nd Edition., U.S. National Library of Medicine, 1 Jan. 1970, www.ncbi.nlm.nih.gov/books/NBK11108/.].
 
-However, despite these undeniable health benefits, sleep also poses considerable risks to the survival of mammals. In a study conducted by Truett Allison and Domenic V. Cicchetti, they explore the “interrelationships between sleep, ecological, and constitutional variables” for 40 mammalian species, including humans. 
+However, despite these undeniable health benefits, sleep also poses considerable risks to the survival of mammals. In a study conducted by Truett Allison and Domenic V. Cicchetti, they explore the “interrelationships between sleep, ecological, and constitutional variables” for 40 mammalian species, including humans^[Allison, T & Cicchetti, Domenic. (1976). Sleep in Mammals – Ecological and Constitutional Correlates. Science (New York, N.Y.). 194. 732-4. 10.1126/science.982039.]. 
 
 
 
 ```{r, echo=FALSE}
-sleep %>% 
+
+sleep_tabdata<-sleep %>% 
   select(!Gestation.time..days.:Overall.danger.index) %>% 
-  arrange(desc(Body.Weight..kg.)) %>% 
-gt(rowname_col = "row",
+  arrange(desc(Body.Weight..kg.))
+
+
+
+gt(sleep_tabdata, rowname_col = "row",
    groupname_col = "group") %>% 
+  tab_options(container.height = 450,
+              container.overflow.y = TRUE) %>% 
   tab_header(
     title = md("**Sleep Patterns in Mammals**")) %>% 
   tab_footnote(
@@ -107,9 +116,77 @@ gt(rowname_col = "row",
 
 Their research finds that slow-wave and paradoxical sleep in mammals are tied to physical characteristics such as body size and brain size, and environmental conditions. Moreover, their research produced an overall danger index for each animal, which was calculated as a combination of the predation index, or the likelihood an animal is to be preyed upon, and the sleep exposure index, or the how exposed an animal’s habitat is while they sleep. 
 
-##Slow-Wave vs. Paradoxical Sleep
+```{r, echo=FALSE}
+predgraph<-sleep %>% 
+  ggplot(aes(x=Predation.index, 
+             y=fct_reorder(Species.of.animal, Predation.index),
+             fill=Predation.index),
+         color="white") +
+  geom_col() +
+  labs(title= "Predation Index by Species",
+       y="",
+       x="",
+       fill= "Predation Index")+
+  theme_minimal()+
+  theme(plot.title.position = "plot", 
+        panel.grid.major = element_blank(),
+        legend.position = "none") +
+  scale_fill_gradient(high="red", low="blue")
 
-Slow-wave sleep involves the stages of non-dreaming sleep and is typically described as “deep sleep” while paradoxical sleep is the REM part of the sleep cycle, and is characterized by dreaming sleep.Together, these contribute to the total hours of sleep in mammals. 
+expgraph<-sleep %>% 
+  ggplot(aes(x=Sleep.exposure.index,
+             y= fct_reorder(Species.of.animal, Sleep.exposure.index),
+             fill=Sleep.exposure.index),
+         color="white") + 
+  geom_col()+
+  labs(title= "Sleep Exposure Index by Species",
+       y="",
+       x="",
+       fill= "Sleep Exposure Index")+
+  theme_minimal()+
+  theme(plot.title.position = "plot", 
+        panel.grid.major = element_blank(),
+        legend.position = "none") +
+  scale_fill_gradient(high="red", low="blue")
+
+overall<-sleep %>% 
+  ggplot(aes(x=Overall.danger.index,
+             y= fct_reorder(Species.of.animal, Overall.danger.index),
+             fill=Overall.danger.index),
+         color="white") + 
+  geom_col()+
+  labs(title= "Overall Danger Index by Species",
+       y="",
+       x="",
+       fill= "Overall Danger Index")+
+  theme_minimal()+
+  theme(plot.title.position = "plot", 
+        panel.grid.major = element_blank()) +
+  scale_fill_gradient(high="red", low="blue")
+
+(predgraph | expgraph)
+```
+```{r, echo=FALSE}
+sleep %>% 
+  ggplot(aes(x=Overall.danger.index,
+             y= fct_reorder(Species.of.animal, Overall.danger.index),
+             fill=Overall.danger.index),
+         color="white") + 
+  geom_col()+
+  labs(title= "Overall Danger Index by Species",
+       y="",
+       x="",
+       fill= "Overall Danger Index")+
+  theme_minimal()+
+  theme(plot.title.position = "plot", 
+        panel.grid.major = element_blank()) +
+  scale_fill_gradient(high="red", low="blue")
+```
+
+
+**Slow-Wave vs. Paradoxical Sleep**
+
+Slow-wave sleep involves the stages of non-dreaming sleep and is typically described as “deep sleep”^[Roth, Thomas. “Slow Wave Sleep: Does It Matter?” Journal of Clinical Sleep Medicine : JCSM : Official Publication of the American Academy of Sleep Medicine, American Academy of Sleep Medicine, 15 Apr. 2009, www.ncbi.nlm.nih.gov/pmc/articles/PMC2824210/.] while paradoxical sleep is the REM part of the sleep cycle, and is characterized by dreaming sleep^[Siegel, Jerome M. “REM Sleep: a Biological and Psychological Paradox.” Sleep Medicine Reviews, U.S. National Library of Medicine, June 2011, www.ncbi.nlm.nih.gov/pmc/articles/PMC3091378/. ].Together, these contribute to the total hours of sleep in mammals. 
 
 ```{r, echo=FALSE}
 G5 <-
@@ -134,7 +211,7 @@ sleep %>%
     plot.caption.position = "plot"
   ) +
   scale_x_continuous(expand = c(0,0)) +
-  scale_fill_manual(labels = c("Dreaming", "Non-Dreaming"), values = c("#0a203b","#2473db"))
+  scale_fill_manual(labels = c("Dreaming", "Non-Dreaming"), values = c("skyblue","#0a203b"))
 
 G5  
 ```
@@ -160,12 +237,16 @@ sleep_graph<-
         legend.position = "None") 
 
 ggplotly(sleep_graph) %>% 
-  hide_legend()
+  hide_legend() 
+
+
+
+
 ```
 
 
 ```{r, echo=FALSE}
-G2 <-
+G7 <-
   sleep %>% 
   filter(Species.of.animal %in% c("Horse", "Cow", "Pig", "Human", "Sheep", "Chimpanzee", "Goat", "Baboon", "Red fox", "Cat", "Rabbit", "Rat", "Ground squirrel", "Mouse")) %>% 
   select(Species.of.animal,Paradoxical.sleep..hrs.day. ,Sleep.exposure.index) %>% 
@@ -197,12 +278,13 @@ G2 <-
     plot.caption.position = "plot",
     plot.subtitle = element_text(color = "white", size = 7)) +
   scale_fill_gradient(high = "#2473db", low = "#c3deff")
-G2
+
+G7
 
 ```
 
 
-##Conclusion
+Ultimately, their findings outline the dimensions of survival while mammals sleep, highlighting the various factors that endanger animals in moments of rest, and how their physical and physiological conditions respond to these dangers.
 
 
 
