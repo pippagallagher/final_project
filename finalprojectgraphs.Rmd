@@ -60,6 +60,7 @@ gt(rowname_col = "row",
     Maximum.life.span..years. ="Maximum Life Span (yrs)")
 ```
 
+
 ```{r, echo=FALSE}
 sleep_graph<-
   sleep %>% 
