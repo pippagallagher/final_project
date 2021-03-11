@@ -3,8 +3,8 @@ title: "Mammal Sleep Behavior"
 author: "Joselyn Angeles and Pippa Gallagher"
 output: 
   html_document:
-    toc: true
-    toc_float: true
+    toc: false
+    toc_float: false
     theme: yeti
     df_print: paged
     code_download: true
@@ -27,9 +27,12 @@ library(flexdashboard)
 sleep<-read.csv("SleepInMammals.csv")
 ```
 
+![Cat Sleeping](images/image3.jpg){Komori, Masataka. 2015}
+
 **Introduction**
 
 Sleep is a natural phenomenon that is ubiquitous for mammals; regardless of species, sleep is a fundamental aspect of mammalian physiology. For humans, sleep specialists recommend that adults get around 7 to 9 hours of sleep per day^[Olson, Eric. “How Many Hours of Sleep Do You Need?” Mayo Clinic, Mayo Foundation for Medical Education and Research, 6 June 2019, www.mayoclinic.org/healthy-lifestyle/adult-health/expert-answers/how-many-hours-of-sleep-are-enough/faq-20057898.], which means that on average we spend about ⅓ of our lives sleeping. 
+
 ```{r, echo=FALSE}
 G4 <-
   sleep %>% 
@@ -69,6 +72,8 @@ G4
 ```
 
  Numerous studies have shown that this need for sleep is tied to a myriad of physical and mental health benefits, including boosting immunity, improving memory and learning functions^[“Benefits of Sleep.” Benefits of Sleep | Healthy Sleep, healthysleep.med.harvard.edu/healthy/matters/benefits-of-sleep. ], and even enhancing mental and emotional resilience to problems^[Publishing, Harvard Health. “Sleep and Mental Health.” Harvard Health, www.health.harvard.edu/newsletter_article/sleep-and-mental-health.]. Scientists posit that other mammals need sleep for similar reasons, finding that sleep-deprived animals will lose weight despite food intake, and have issues regulating their body temperature, resulting in their death^[Purves, Dale. “Why Do Humans and Many Other Animals Sleep?” Neuroscience. 2nd Edition., U.S. National Library of Medicine, 1 Jan. 1970, www.ncbi.nlm.nih.gov/books/NBK11108/.].
+ 
+ ![Seal Sleeping](images/image1.png){Scheider, Rolf. Sleeping like a Weddell. 2019}
 
 However, despite these undeniable health benefits, sleep also poses considerable risks to the survival of mammals. In a study conducted by Truett Allison and Domenic V. Cicchetti, they explore the “interrelationships between sleep, ecological, and constitutional variables” for 40 mammalian species, including humans^[Allison, T & Cicchetti, Domenic. (1976). Sleep in Mammals – Ecological and Constitutional Correlates. Science (New York, N.Y.). 194. 732-4. 10.1126/science.982039.]. 
 
@@ -285,6 +290,9 @@ G7
 
 
 Ultimately, their findings outline the dimensions of survival while mammals sleep, highlighting the various factors that endanger animals in moments of rest, and how their physical and physiological conditions respond to these dangers.
+
+![Monkey Sleeping](images/image4.jpg){Scuffins, Chris. 2015}
+
 
 
 
