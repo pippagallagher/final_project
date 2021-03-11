@@ -26,6 +26,51 @@ sleep<-read.csv("SleepInMammals.csv")
 
 ## Introduction
 
+Sleep is a natural phenomenon that is ubiquitous for mammals; regardless of species, sleep is a fundamental aspect of mammalian physiology. For humans, sleep specialists recommend that adults get around 7 to 9 hours of sleep per day, which means that on average we spend about ⅓ of our lives sleeping. 
+```{r, echo=FALSE}
+G4 <-
+  sleep %>% 
+   filter(Species.of.animal %in% c("Horse", "Cow", "Pig", "Human", "Sheep", "Chimpanzee", "Goat", "Baboon", "Red fox", "Cat", "Rabbit", "Rat", "Ground squirrel", "Mouse")) %>% 
+  mutate(Total_hours_sleeping_life = Total.sleep..hrs.day. * (Maximum.life.span..years. * 365),
+         Total_hours_alive = Maximum.life.span..years. * 365 * 24,
+         Prop_spent_sleeping = (Total_hours_sleeping_life/Total_hours_alive) *100) %>% 
+   ggplot() +
+  geom_col(aes(y = Prop_spent_sleeping, 
+               x = fct_reorder(Species.of.animal,Prop_spent_sleeping,median),
+              fill = Maximum.life.span..years.)) +
+  geom_text(aes(y = Prop_spent_sleeping + 20, x=fct_reorder(Species.of.animal,Prop_spent_sleeping,median), label= Species.of.animal), color="white", fontface="bold",alpha=0.6, size=2.5, inherit.aes = FALSE ) +
+  coord_polar(start = 0) +
+  ylim(-5,90) +
+   theme(
+    axis.text.x = element_blank(),
+    panel.grid = element_blank(),
+    plot.background = element_rect(fill = "#0a203b"),
+    panel.background = element_rect(fill = "#0a203b"),
+    legend.background = element_rect(fill = "#0a203b"),
+    plot.title = element_text(color = "white"),
+    plot.title.position = "plot",
+    legend.text = element_text(color = "white"),
+    legend.title = element_text(color = "white"),
+    axis.text.y = element_text(color = "white"),
+    plot.caption = element_text(color = "white"),
+    plot.caption.position = "plot",
+    plot.subtitle = element_text(color = "white", size = 7)) +
+  scale_fill_gradient(high = "#2473db", low = "#c3deff") +
+  labs(title = "Proportion of Mammals' Lives Spent Sleeping",
+       x = "",
+       y = "",
+       caption = "Pippa Gallagher and Joselyn Angeles",
+       fill = "Maximum Life Span")
+  
+G4 
+```
+
+ Numerous studies have shown that this need for sleep is tied to a myriad of physical and mental health benefits, including boosting immunity, improving memory and learning functions, and even enhancing mental and emotional resilience to problems. Scientists posit that other mammals need sleep for similar reasons, finding that sleep-deprived animals will lose weight despite food intake, and have issues regulating their body temperature, resulting in their death.
+
+However, despite these undeniable health benefits, sleep also poses considerable risks to the survival of mammals. In a study conducted by Truett Allison and Domenic V. Cicchetti, they explore the “interrelationships between sleep, ecological, and constitutional variables” for 40 mammalian species, including humans. 
+
+
+
 ```{r, echo=FALSE}
 sleep %>% 
   select(!Gestation.time..days.:Overall.danger.index) %>% 
@@ -60,6 +105,41 @@ gt(rowname_col = "row",
     Maximum.life.span..years. ="Maximum Life Span (yrs)")
 ```
 
+Their research finds that slow-wave and paradoxical sleep in mammals are tied to physical characteristics such as body size and brain size, and environmental conditions. Moreover, their research produced an overall danger index for each animal, which was calculated as a combination of the predation index, or the likelihood an animal is to be preyed upon, and the sleep exposure index, or the how exposed an animal’s habitat is while they sleep. 
+
+##Slow-Wave vs. Paradoxical Sleep
+
+Slow-wave sleep involves the stages of non-dreaming sleep and is typically described as “deep sleep” while paradoxical sleep is the REM part of the sleep cycle, and is characterized by dreaming sleep.Together, these contribute to the total hours of sleep in mammals. 
+
+```{r, echo=FALSE}
+G5 <-
+sleep %>% 
+  pivot_longer(cols = Slow.wave.sleep..hrs.day.:Paradoxical.sleep..hrs.day., names_to = "Dream_Type", values_to = "Hours") %>% 
+  ggplot() +
+  geom_col(aes(x = Hours, y = fct_reorder(Species.of.animal, Hours), fill = Dream_Type)) +
+  labs(title = "Proportion of Dreaming vs Non-Dreaming Sleep",
+       y = "",
+       x = "",
+       fill = "Sleep Type",
+       caption = "Pippa Gallagher and Joselyn Angeles",
+       subtitle = "    ") +
+  theme(
+    axis.text.y = element_text(size = 6.5),
+    panel.grid.major.x = element_blank(),
+    panel.grid.minor.x = element_blank(),
+    panel.grid.major.y = element_blank(),
+    panel.grid.minor.y = element_blank(),
+    plot.title.position = "plot",
+    plot.title = element_text(color = "#0a203b"),
+    plot.caption.position = "plot"
+  ) +
+  scale_x_continuous(expand = c(0,0)) +
+  scale_fill_manual(labels = c("Dreaming", "Non-Dreaming"), values = c("#0a203b","#2473db"))
+
+G5  
+```
+
+Allison and Cichetti find that type of sleep is related in different ways to the survival of mammals. For example, slow wave sleep is negatively associated with the body size of mammals, which implies that longer slow wave sleep cycles can be more dangerous for larger animals. However, paradoxical sleep is associated with a higher predation index, which means that large amounts of this sleep cycle can be risky for prey species. 
 
 ```{r, echo=FALSE}
 sleep_graph<-
@@ -81,105 +161,6 @@ sleep_graph<-
 
 ggplotly(sleep_graph) %>% 
   hide_legend()
-```
-
-```{r, echo=FALSE}
-sleep %>% 
-    ggplot(aes(x = Overall.danger.index,
-               y = fct_reorder(Species.of.animal,
-                               Overall.danger.index,
-                               .desc = FALSE),
-               fill = Predation.index),
-           color = "white") +
-    geom_col() +
-    labs(title = "Overall danger index of attacks from other animals for mammals",
-         subtitle = "    ",
-         caption = "Pippa Gallagher and Joselyn Angeles",
-         x = "",
-         y = "",
-         fill = "Predation Index") +
-  scale_x_continuous(expand = c(0,0)) +
-    theme(
-          axis.text.y = element_text(size = 6.5),
-          plot.title.position = "plot",
-          plot.caption.position = "plot",
-          plot.title = element_text(color = "#0a203b"),
-          panel.grid.major.x = element_blank(),
-          panel.grid.minor.x = element_blank(),
-          panel.grid.major.y = element_blank(),
-          panel.grid.minor.y = element_blank(),
-          panel.background = element_rect(color = "white"),
-          plot.background = element_rect(color = "white")) +
-    scale_fill_gradient(high = "#0a203b", low = "#c3deff")
-```
-
-```{r, echo=FALSE}
-G0 <-
-sleep %>% 
-  mutate(percent_dreaming = (Paradoxical.sleep..hrs.day./Total.sleep..hrs.day.) * 100) %>% 
-  filter(percent_dreaming != 0) %>% 
-  ggplot() +
-  geom_col(aes(x = percent_dreaming, 
-               y = fct_reorder(Species.of.animal, percent_dreaming, median),
-               fill = Total.sleep..hrs.day.)) +
-  labs(title = "How Much do Mammals Dream",
-       y = "",
-       x = "Percentage of Hours Dreaming",
-       fill = "Total Sleeping Hours",
-       caption = "Pippa Gallagher and Joselyn Angeles",
-       subtitle = "    ") +
-  theme(
-    axis.text.y = element_text(size = 6.5),
-    panel.grid.major.x = element_blank(),
-    panel.grid.minor.x = element_blank(),
-    panel.grid.major.y = element_blank(),
-    panel.grid.minor.y = element_blank(),
-    plot.title.position = "plot",
-    plot.title = element_text(color = "#0a203b"),
-    plot.caption.position = "plot"
-  ) +
-  scale_x_continuous(expand = c(0,0)) +
-  scale_fill_gradient(high = "#0a203b", low = "#c3deff")
-G0
-
-```
-
-```{r, echo=FALSE}
-G1 <-
-  sleep %>% 
-  filter(Species.of.animal %in% c("Horse", "Cow", "Pig", "Human", "Sheep", "Chimpanzee", "Goat", "Baboon", "Red fox", "Cat", "Rabbit", "Rat", "Ground squirrel", "Mouse")) %>% 
-  select(Species.of.animal, Slow.wave.sleep..hrs.day.,Sleep.exposure.index) %>% 
-  ggplot() +
-  geom_col(aes(y = Slow.wave.sleep..hrs.day., 
-               x = fct_reorder(Species.of.animal,Slow.wave.sleep..hrs.day.,median),
-               fill = Sleep.exposure.index)) +
-  geom_text(aes(y = Slow.wave.sleep..hrs.day. + 5, x=fct_reorder(Species.of.animal,Slow.wave.sleep..hrs.day.,median), label= Species.of.animal), color="white", fontface="bold",alpha=0.6, size= 2.5, inherit.aes = FALSE ) +
-  scale_color_viridis_c(option = "magma") +
-  labs(title = "Non-Dreaming Hours of Sleep per Day",
-       caption = "Pippa Gallagher and Joselyn Angeles",
-       subtitle = "This measures the number of hours of slow wave (non-dreaming) sleep each mammal, on avergae, has each night.\nThe Sleep Measure Index determines how vulnerable the mammal is when sleeping, with 1 being the least vulnerbale \nand 5 the most.",
-       y = "",
-       x = "",
-       fill = "Sleep Exposure Index") +
-  coord_polar(start = 0) +
-  ylim(-3,18) +
-   theme(
-    axis.text.x = element_blank(),
-    panel.grid = element_blank(),
-    plot.background = element_rect(fill = "#0a203b"),
-    panel.background = element_rect(fill = "#0a203b"),
-    legend.background = element_rect(fill = "#0a203b"),
-    plot.title = element_text(color = "white"),
-    plot.title.position = "plot",
-    legend.text = element_text(color = "white"),
-    legend.title = element_text(color = "white"),
-    axis.text.y = element_text(color = "white"),
-    plot.caption = element_text(color = "white"),
-     plot.caption.position = "plot",
-    plot.subtitle = element_text(color = "white", size = 7)) +
-  scale_fill_gradient(high = "#2473db", low = "#c3deff")
-  
-G1
 ```
 
 
@@ -221,102 +202,11 @@ G2
 ```
 
 
-```{r, echo=FALSE}
-G3 <-
-  sleep %>% 
-  ggplot() +
-  geom_violin(aes(x = Overall.danger.index,
-                  y = Maximum.life.span..years.),
-                  color = "#2473db",
-                  fill = "#c3deff") +
-  theme(
-    plot.background = element_rect("#0a203b"),
-    panel.background = element_rect("#0a203b"),
-    plot.title = element_text(color = "white"),
-    panel.grid.major.x = element_blank(),
-    panel.grid.minor.x = element_blank(),
-    panel.grid.major.y = element_blank(),
-    panel.grid.minor.y = element_blank(),
-    axis.text = element_text(color = "white"),
-    plot.caption = element_text(color = "white"),
-    plot.caption.position = "plot",
-    plot.title.position = "plot",
-    plot.subtitle = element_text(color = "white", size = 7)
-  ) +
-  labs(x = "",
-       y = "",
-       title = "The Correlation between Maximum Life Span and Danger Index",
-       subtitle = "The Danger Index determines how vulnerable the mammal is to harm, with 1 being the least vulnerbale and 5 the most.",
-       caption = "Pippa Gallagher and Joselyn Angeles")
-  
-G3
-```
+##Conclusion
 
-```{r, echo=FALSE}
-G4 <-
-  sleep %>% 
-   filter(Species.of.animal %in% c("Horse", "Cow", "Pig", "Human", "Sheep", "Chimpanzee", "Goat", "Baboon", "Red fox", "Cat", "Rabbit", "Rat", "Ground squirrel", "Mouse")) %>% 
-  mutate(Total_hours_sleeping_life = Total.sleep..hrs.day. * (Maximum.life.span..years. * 365),
-         Total_hours_alive = Maximum.life.span..years. * 365 * 24,
-         Prop_spent_sleeping = (Total_hours_sleeping_life/Total_hours_alive) *100) %>% 
-   ggplot() +
-  geom_col(aes(y = Prop_spent_sleeping, 
-               x = fct_reorder(Species.of.animal,Prop_spent_sleeping,median),
-              fill = Maximum.life.span..years.)) +
-  geom_text(aes(y = Prop_spent_sleeping + 20, x=fct_reorder(Species.of.animal,Prop_spent_sleeping,median), label= Species.of.animal), color="white", fontface="bold",alpha=0.6, size=2.5, inherit.aes = FALSE ) +
-  coord_polar(start = 0) +
-  ylim(-5,90) +
-   theme(
-    axis.text.x = element_blank(),
-    panel.grid = element_blank(),
-    plot.background = element_rect(fill = "#0a203b"),
-    panel.background = element_rect(fill = "#0a203b"),
-    legend.background = element_rect(fill = "#0a203b"),
-    plot.title = element_text(color = "white"),
-    plot.title.position = "plot",
-    legend.text = element_text(color = "white"),
-    legend.title = element_text(color = "white"),
-    axis.text.y = element_text(color = "white"),
-    plot.caption = element_text(color = "white"),
-    plot.caption.position = "plot",
-    plot.subtitle = element_text(color = "white", size = 7)) +
-  scale_fill_gradient(high = "#2473db", low = "#c3deff") +
-  labs(title = "Proportion of Mammals' Lives Spent Sleeping",
-       x = "",
-       y = "",
-       caption = "Pippa Gallagher and Joselyn Angeles",
-       fill = "Maximum Life Span")
-  
-G4 
-```
 
-```{r, echo=FALSE}
-G5 <-
-sleep %>% 
-  pivot_longer(cols = Slow.wave.sleep..hrs.day.:Paradoxical.sleep..hrs.day., names_to = "Dream_Type", values_to = "Hours") %>% 
-  ggplot() +
-  geom_col(aes(x = Hours, y = fct_reorder(Species.of.animal, Hours), fill = Dream_Type)) +
-  labs(title = "Proportion of Dreaming vs Non-Dreaming Sleep",
-       y = "",
-       x = "",
-       fill = "Sleep Type",
-       caption = "Pippa Gallagher and Joselyn Angeles",
-       subtitle = "    ") +
-  theme(
-    axis.text.y = element_text(size = 6.5),
-    panel.grid.major.x = element_blank(),
-    panel.grid.minor.x = element_blank(),
-    panel.grid.major.y = element_blank(),
-    panel.grid.minor.y = element_blank(),
-    plot.title.position = "plot",
-    plot.title = element_text(color = "#0a203b"),
-    plot.caption.position = "plot"
-  ) +
-  scale_x_continuous(expand = c(0,0)) +
-  scale_fill_manual(labels = c("Dreaming", "Non-Dreaming"), values = c("#0a203b","#2473db"))
 
-G5  
-```
+
 
 
 
